@@ -26,30 +26,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Determine the path to the frontend dist folder
-// process.cwd() is typically the root of your repo on Render
-const frontendDist = path.join(process.cwd(), 'frontend/dist');
+// Path to frontend dist (two levels up from backend/src)
+const frontendDist = path.join(__dirname, '../../frontend/dist');
 
-// Serve static files
+// Serve static assets (JS, CSS, images)
 app.use(express.static(frontendDist));
 
-// Serve index.html for any unmatched routes (SPA support)
-app.get('*', (req, res) => {
+// Fallback: for any request not handled by static middleware, send index.html
+// This supports client-side routing (React Router, etc.)
+app.use((req, res) => {
   res.sendFile(path.join(frontendDist, 'index.html'));
 });
-app.get('/debug', (req, res) => {
-  const fs = require('fs');
-  res.json({
-    cwd: process.cwd(),
-    __dirname,
-    frontendDistExists: fs.existsSync(path.join(process.cwd(), 'frontend/dist')) 
-      ? 'frontend/dist exists' 
-      : 'not found',
-    filesAtCwd: fs.readdirSync(process.cwd()),
-  });
-});
-// Start Server
-const port = process.env.PORT || 3000; // Use Render's assigned port
+
+// Start server
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`🚀 Server running at http://localhost:${port}`);
 });
