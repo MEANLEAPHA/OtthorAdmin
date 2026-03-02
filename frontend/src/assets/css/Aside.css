@@ -1,0 +1,116 @@
+:root{
+    /* --background-color:white; */
+     --background-color:rgb(32, 32, 32);
+    --primary-color:#fd7648;
+    /* --secondary-color: gainsboro; */
+     --secondary-color: rgba(220, 220, 220, 0.318);
+    /* --font-color:rgb(65, 65, 65); */
+    --font-color:rgb(255, 255, 255);
+
+    --back-con:rgb(245, 245, 245);
+    --primary-font:monospace;
+}
+.dark-theme{
+    --background-color:rgb(32, 32, 32);
+    --primary-color:#fd7648;
+    --secondary-color: rgba(220, 220, 220, 0.318);
+    --font-color:rgb(255, 255, 255);
+     --back-con:rgb(40, 40, 40);
+}
+.MaxAside{
+    width: 17%;
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+}
+.MaxMenu{
+    margin: 0;
+    padding: 10px 0px 30px 0px; 
+    width: 100%;
+    height: calc(100vh - 50px);
+    border-right: 1px solid var(--secondary-color);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+menu label{
+    color: antiquewhite;
+    font-family: 'Roboto', sans-serif;
+    margin-left: 22px;
+    margin-top: 18px;
+    opacity: 0.6;
+   
+}
+.MaxMenu a{
+    text-decoration: none;
+    color: var(--font-color);
+    color: var(--font-color);
+    margin: 0;
+    width: 100%;
+    height: auto;
+   
+}
+a{
+    text-decoration: none;
+    color: var(--font-color);
+    color: var(--font-color);
+    margin: 0;
+    width: 100%;
+    height: auto;
+   
+}
+.MaxMenu a li{
+    display: flex;
+    gap: 25px;
+    font-size: 17px;
+     margin: 0;
+     height: auto;
+    align-items: center;
+     font-family: sans-serif;
+     padding: 10px 22px 10px 22px;
+    transition: all 0.5s ease;
+}
+.MaxMenu a li:hover{
+    color: var(--primary-color);
+    padding-left:32px ;
+    transform: scale(0.9);
+}
+.icon-aside{
+    opacity: 0.9;
+}
+
+.minAside{
+    width: 5%;
+}
+.minMenu{
+    margin: 0;
+    padding: 10px 0px 30px 0px; 
+    width: 100%;
+    height: calc(100vh - 50px);
+    border-right: 1px solid var(--secondary-color);
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    overflow: scroll;
+    scrollbar-width: none;
+    gap: 8px;
+    
+}
+.minMenu li{
+    font-size: 20px;
+     margin: 0;
+     height: auto;
+    align-items: center;
+     padding: 10px 20px 10px 20px;
+    transition: all 0.5s ease;
+
+}
+.minMenu li:hover{
+    color: var(--primary-color);
+
+    border-radius: 5px;
+    transform: scale(1.1);
+   
+}
