@@ -1,8 +1,11 @@
 import React from "react";
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGauge,faSliders, faFlag, faCommentDots, faBug, faUser, faBook, faNewspaper, faUsers, faComments, faComment, faBell} from "@fortawesome/free-solid-svg-icons";
+import { faGauge,faSliders, faFlag, faCommentDots, faBug, faUser, faBook, faNewspaper, faUsers, faComments, faComment, faBell, faFlagCheckered, faDatabase, faChartPie, faTowerBroadcast} from "@fortawesome/free-solid-svg-icons";
 import "../css/Aside.css";
+import {Link, useNavigate} from "react-router-dom";
+
+
 const Aside = () =>{
     return(
        
@@ -38,50 +41,70 @@ const SmallAside = () => {
 
 const MinInfo = [
     {
-        id:1, a: '#', icon: faGauge, classNameIcon: 'icon-aside'
+        id:1, a: '/DashBoard', icon: faChartPie, subMenu: [
+            {id:1, a: '#', icon: faSliders, classNameIcon: 'icon-aside', label: 'Mantaince', title: 'Dashboard'},
+            {id:2, a: '#', icon: faGauge, classNameIcon: 'icon-aside', label: 'Mantaince'}
+        ]
     },
     {
-        id:2, a: '#', icon: faSliders, classNameIcon: 'icon-aside'
+        id:2, a: '/Error', icon: faBug, subMenu: [
+            {id:1, a: '#', icon: faSliders, classNameIcon: 'icon-aside', title: 'Bug&Issue'},
+            {id:2, a: '#', icon: faGauge, classNameIcon: 'icon-aside'}
+        ]
     },
     {
-        id:3, a: '#', icon: faBug,  classNameIcon: 'icon-aside'
+        id:3, a: '/UserInsight', icon: faDatabase, subMenu: [
+            {
+                id:1, a: '/User', icon: faUser, label: 'User', classNameIcon: 'icon-aside', title: 'User Insight'
+            },
+            {
+                id:2, a: '/Community', icon: faUsers, label: 'Community', classNameIcon: 'icon-aside'
+            },
+            {
+                id:3, a: '/Book', icon: faBook, label: 'Book', classNameIcon: 'icon-aside'
+            },
+            {
+                id:4, a: '/Comment', icon: faComment, label: 'Comment', classNameIcon: 'icon-aside'
+            },
+            {
+                id:5, a: '/Reply', icon: faComments, label: 'Reply', classNameIcon: 'icon-aside'
+            }
+        ]
     },
     {
-        id:4, a: '#', icon: faCommentDots, classNameIcon: 'icon-aside'
+        id:4, a: '/FeedbackAndReport', icon: faFlagCheckered, subMenu: [
+            {
+                id:1, a: '/Feedback', icon: faCommentDots, label: 'Feedback', classNameIcon: 'icon-aside', title: 'Report&Feedback'
+            },
+            {
+                id:2, a: '/Report', icon: faFlag, label: 'Report', classNameIcon: 'icon-aside'
+            }
+        ]
     },
     {
-        id:5, a: '#', icon: faFlag, classNameIcon: 'icon-aside'
-    },
-    {
-        id:6, a: '#', icon: faBug, classNameIcon: 'icon-aside'
-    },
-    {
-        id:7, a: '#', icon: faUser, label: 'User', classNameIcon: 'icon-aside'
-    },
-    {
-        id:8, a: '#', icon: faUsers, classNameIcon: 'icon-aside'
-    },
-    {
-        id:9, a: '#', icon: faBook, classNameIcon: 'icon-aside'
-    },
-    {
-        id:10, a: '#', icon: faComment, classNameIcon: 'icon-aside'
-    },
-    {
-        id:11, a: '#', icon: faComments, classNameIcon: 'icon-aside'
-    },
-    {
-        id:12, a: '#', icon: faBell, classNameIcon: 'icon-aside'
-    },
-    {
-        id:13, a: '#', icon: faNewspaper, classNameIcon: 'icon-aside'
+        id:5, a: '/Broadcast', icon: faTowerBroadcast, subMenu: [
+            {
+                id:1, a: '/Notification', icon: faBell, label: 'Notification', classNameIcon: 'icon-aside', title: 'Broadcast'
+            },
+            {
+                id:2, a: '/Article', icon: faNewspaper, label: 'Article', classNameIcon: 'icon-aside'
+            }
+        ]
     }
 ]
-const MinCard = ({a, icon, classNameIcon}) => {
+const MinCard = ({a, icon, subMenu}) => {
+    const navigate = useNavigate();
     return(
-        <a href={a}>
-            <li><FontAwesomeIcon icon={icon} className={classNameIcon}/> </li>
-        </a>
+            <li className="nav-item">
+                <button onClick={() => navigate(a)}>
+                         <FontAwesomeIcon icon={icon} id='sub-icon'/> 
+                </button>
+                <ul className="sub-menu">
+                        {subMenu.map(item => (
+                            <MiniCard key={item.id} {...item} />
+                        ))}
+                </ul>
+            </li>
     )
 }
 
@@ -92,38 +115,60 @@ const AppendMinAside = () =>{
         ))
     )
 };
-const MinAside = ({a, icon, classNameIcon})=> {
+const MinAside = ({a, icon, classNameIcon, subMenu})=> {
     return(
-           <MinCard a={a} icon={icon} classNameIcon={classNameIcon}/>
+           <MinCard a={a} icon={icon} classNameIcon={classNameIcon} subMenu={subMenu}/>
     )
 };
 
 
 
 const Card = ({a, icon, label, classNameIcon}) =>{
+    const navigate = useNavigate();
     return(
-       <a href={a}>
-                    <li>
-                        <div>
-                            <FontAwesomeIcon icon={icon} className={classNameIcon}/> 
-                        </div>
-                        <div>
-                            {label}
-                        </div>
-                    </li>
-          </a>
+        <li>
+            <button onClick={() => navigate(a)} >
+                <div>
+                    <FontAwesomeIcon icon={icon} className={classNameIcon}/> 
+                </div>
+                <div>
+                    {label}
+                </div>
+                    
+            </button>
+          </li>
     )
 };
 
+const MiniCard = ({a, icon, label, classNameIcon, title}) =>{
+    const navigate = useNavigate();
+    return(
+        <>
+            <p>{title}</p>
+            
+            <li className='sub-menu-li'>
+                <button onClick={() => navigate(a)} className='sub-menu-btn'>
+                    <div>
+                        <FontAwesomeIcon icon={icon} className={classNameIcon}/> 
+                    </div>
+                    <div>
+                        {label}
+                    </div>
+                        
+                </button>
+            </li>
+        </>
+    )
+}; 
 const Mains= [
     {
-        id:1, a: '#', icon: faGauge, label: 'Dashboard', classNameIcon: 'icon-aside'
+        id:1, a: '/Dashboard', icon: faChartPie, label: 'Dashboard', classNameIcon: 'icon-aside'
     },
     {
-        id:2, a: '#', icon: faSliders, label: 'Maintenance', classNameIcon: 'icon-aside'
+        id:2, a: '/Maintenance', icon: faSliders, label: 'Maintenance', classNameIcon: 'icon-aside'
     },
     {
-        id:3, a: '#', icon: faBug, label: 'Error', classNameIcon: 'icon-aside'
+        id:3, a: '/Error', icon: faBug, label: 'Error', classNameIcon: 'icon-aside'
     }
 ];
 const AppendMain = () =>{
@@ -131,7 +176,7 @@ const AppendMain = () =>{
         Mains.map(item => (
             <Main key={item.id} {...item} />
         ))
-    )
+    ) 
 };
 const Main = ({a, icon, label, classNameIcon})=> {
     return(
@@ -141,13 +186,10 @@ const Main = ({a, icon, label, classNameIcon})=> {
 
 const ReportAndFeedbacks= [
     {
-        id:1, a: '#', icon: faCommentDots, label: 'Feedback', classNameIcon: 'icon-aside'
+        id:1, a: '/Feedback', icon: faCommentDots, label: 'Feedback', classNameIcon: 'icon-aside'
     },
     {
-        id:2, a: '#', icon: faFlag, label: 'Report', classNameIcon: 'icon-aside'
-    },
-    {
-        id:3, a: '#', icon: faBug, label: 'Error', classNameIcon: 'icon-aside'
+        id:2, a: '/Report', icon: faFlag, label: 'Report', classNameIcon: 'icon-aside'
     }
 ];
 
@@ -170,19 +212,19 @@ const ReportAndFeedback = ({a, icon, label, classNameIcon})=> {
 
 const UserInsights= [
     {
-        id:1, a: '#', icon: faUser, label: 'User', classNameIcon: 'icon-aside'
+        id:1, a: '/User', icon: faUser, label: 'User', classNameIcon: 'icon-aside'
     },
     {
-        id:2, a: '#', icon: faUsers, label: 'Community', classNameIcon: 'icon-aside'
+        id:2, a: '/Community', icon: faUsers, label: 'Community', classNameIcon: 'icon-aside'
     },
     {
-        id:3, a: '#', icon: faBook, label: 'Book', classNameIcon: 'icon-aside'
+        id:3, a: '/Book', icon: faBook, label: 'Book', classNameIcon: 'icon-aside'
     },
     {
-        id:4, a: '#', icon: faComment, label: 'Comment', classNameIcon: 'icon-aside'
+        id:4, a: '/Comment', icon: faComment, label: 'Comment', classNameIcon: 'icon-aside'
     },
     {
-        id:5, a: '#', icon: faComments, label: 'Reply', classNameIcon: 'icon-aside'
+        id:5, a: '/Reply', icon: faComments, label: 'Reply', classNameIcon: 'icon-aside'
     }
 ];
 
@@ -206,10 +248,10 @@ const UserInsight = ({a, icon, label, classNameIcon})=> {
 
 const Broadcasts= [
     {
-        id:1, a: '#', icon: faBell, label: 'Notification', classNameIcon: 'icon-aside'
+        id:1, a: '/Notification', icon: faBell, label: 'Notification', classNameIcon: 'icon-aside'
     },
     {
-        id:2, a: '#', icon: faNewspaper, label: 'Article', classNameIcon: 'icon-aside'
+        id:2, a: '/Article', icon: faNewspaper, label: 'Article', classNameIcon: 'icon-aside'
     }
 ];
 
