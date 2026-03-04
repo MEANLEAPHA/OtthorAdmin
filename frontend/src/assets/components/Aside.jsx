@@ -6,11 +6,10 @@ import "../css/Aside.css";
 import {Link, useNavigate} from "react-router-dom";
 
 
-const Aside = () =>{
+
+const Aside = (props) =>{
     return(
-       
-                <SmallAside />
-           
+        props.append ? <MaxAside /> : <SmallAside />
     )
 }
 

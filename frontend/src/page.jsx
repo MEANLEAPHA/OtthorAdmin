@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../src/assets/components/Header';
 import Main from '../src/assets/components/Main';
 import Footer from '../src/assets/components/Footer';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Error from './assets/components/pages/Error';
-
+import './assets/css/Page.css'
 
 import UserInsight from './assets/components/pages/UserInsight';
     import Book from './assets/components/pages/page_detail/Book';
@@ -21,6 +21,7 @@ import Broadcast from './assets/components/pages/Broadcast';
 import FeedbackAndReport from './assets/components/pages/FeedbackAndReport';
     import Feedback from './assets/components/pages/page_detail/Feedback';
     import Report from './assets/components/pages/page_detail/Report';
+import { useState } from 'react';
 
 
 const Page = () =>{
@@ -55,11 +56,39 @@ const Page = () =>{
 }
  
 const App = () =>{
+
+    const [showAside, setShowAside] = useState(true);
+    const toggleAside = () =>{
+        setShowAside(prev => !prev)
+    }
+
+    const [darkMode, setDarkMode] = useState(()=>{
+        return localStorage.getItem("darkMode") === "true"; 
+    });
+
+    useEffect(
+        () => {
+            if(darkMode){
+                document.body.classList.add("dark-theme")
+            }
+            else{
+                document.body.classList.remove("dark-theme")
+            }
+            localStorage.setItem("darkMode", darkMode);
+        },
+        [darkMode]
+    );
+
+    const toggleTheme = () =>{
+        setDarkMode(prev => !prev)
+    }
     return(
         <>
-            <Header />
-            <Main />
+        <body>
+            <Header onToggleAside={toggleAside} onToggleTheme={toggleTheme} currrentTheme={darkMode}/>
+            <Main appendValue={showAside}/>
             <Footer />
+        </body>
         </>
     )
 }

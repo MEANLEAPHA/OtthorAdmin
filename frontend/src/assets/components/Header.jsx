@@ -1,14 +1,14 @@
 import React from "react";
 import "../css/Header.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faMagnifyingGlass, faChevronDown, faMoon, faInbox } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faMagnifyingGlass, faChevronDown, faMoon, faInbox, faSun } from "@fortawesome/free-solid-svg-icons";
 
 
-const Header = () => {
+const Header = ({onToggleAside, onToggleTheme, currrentTheme}) => {
   return (
      <header>
       <div className="header-left">
-        <FontAwesomeIcon icon={faBars} className="bar-icon" />
+        <FontAwesomeIcon icon={faBars} className="bar-icon" onClick={onToggleAside}/>
         <div className="logo-div">
           <img
             src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762309977977-otthorD.png"
@@ -26,7 +26,7 @@ const Header = () => {
         </button>
       </div>
       <div className="header-right">
-        <FontAwesomeIcon icon={faMoon} />
+        <FontAwesomeIcon icon={currrentTheme ? faMoon : faSun} onClick={onToggleTheme}/>
         <FontAwesomeIcon icon={faInbox} />
         <div style={{display:"flex", alignItems:"center", paddingBottom:"5px"}}><big style={{opacity:0.5}}>|</big></div> 
         <div className="profile-div">

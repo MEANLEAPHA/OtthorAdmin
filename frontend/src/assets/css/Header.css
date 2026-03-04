@@ -51,11 +51,14 @@ header{
 .logo-div{
     width: 45%;
     height:100%;
-     
+
 }
 .logo-div-img{
     width:85%;
     height:100%;
+     user-select: none; /* Prevent text/image selection */
+      pointer-events: auto; /* Still allow clicks if needed */
+      -webkit-user-drag: none; /* Prevent dragging in WebKit browsers */
 }
 
 

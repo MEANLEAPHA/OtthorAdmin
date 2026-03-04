@@ -17,6 +17,7 @@
     --font-color:rgb(255, 255, 255);
      --back-con:rgb(40, 40, 40);
 }
+
 .MaxAside{
     width: 17%;
     background-color: var(--background-color);
