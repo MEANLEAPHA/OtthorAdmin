@@ -1,9 +1,9 @@
 :root{
     /* --background-color:white; */
-     --background-color:rgb(119, 119, 119);
+     --background-color: rgb(234, 234, 234);
     --primary-color:#fd7648;
     /* --secondary-color: gainsboro; */
-     --secondary-color: rgba(220, 220, 220, 0.318);
+     --secondary-color: rgba(107, 107, 107, 0.318);
     /* --font-color:rgb(65, 65, 65); */
     --font-color:rgb(0, 0, 0);
 

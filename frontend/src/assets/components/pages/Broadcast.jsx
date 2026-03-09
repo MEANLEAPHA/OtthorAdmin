@@ -4,17 +4,29 @@ import Footer from "../Footer";
 import Aside from "../Aside";
 import "../../css/Main.css";
 import "../../css/Page.css";
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from 'react';
+
 export default function Broadcast(){
 
-    const [showAside, setShowAside] = useState(true);
+    const [showMaxAside, setMaxAside] = useState(() => {
+        return localStorage.getItem("maxAside") === "true";
+    })
+
+    useEffect(()=>{
+        localStorage.setItem("maxAside", showMaxAside)
+    },
+    [showMaxAside]
+    );
+
     const toggleAside = () =>{
-        setShowAside(prev => !prev)
+            setMaxAside(prev => !prev)
     }
-     const [darkMode, setDarkMode] = useState(()=>{
+
+
+     const [darkMode, setDarkMode] = useState( () => {
             return localStorage.getItem("darkMode") === "true"; 
         });
     
@@ -30,25 +42,24 @@ export default function Broadcast(){
             },
             [darkMode]
         );
-    
+     
         const toggleTheme = () =>{
             setDarkMode(prev => !prev)
         }
+        
     return(
         <>
-        <body>
-            <Header onToggleAside={toggleAside} onToggleTheme={toggleTheme}/>
-            <Main />
+            <Header onToggleAside={toggleAside} onToggleTheme={toggleTheme} currentTheme={darkMode}/>
+             <Main appendValue={showMaxAside}/>
             <Footer />
-        </body>
         </>
     )
 }
 
-const Main = () =>{
+const Main = ({appendValue}) =>{
     return(
         <main>
-            <Aside />
+            <Aside append={appendValue}/>
             <Section />
         </main>
     )

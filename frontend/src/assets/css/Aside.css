@@ -37,11 +37,11 @@
     scrollbar-width: none;
 }
 menu label{
-    color: antiquewhite;
+    color: var(--font-color);
     font-family: 'Roboto', sans-serif;
     margin-left: 22px;
     margin-top: 18px;
-    opacity: 0.6;
+    opacity: 0.5;
    
 }
 .MaxMenu  li{

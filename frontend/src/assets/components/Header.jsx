@@ -1,32 +1,36 @@
 import React from "react";
 import "../css/Header.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faMagnifyingGlass, faChevronDown, faMoon, faInbox, faSun } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faMagnifyingGlass, faChevronDown, faMoon, faInbox, faSun, faArrowRightFromBracket, faFireFlameCurved, faMagnifyingGlassChart, faChartSimple, faGauge,faSliders, faFlag, faCommentDots, faBug, faUser, faBook, faNewspaper, faUsers, faComments, faComment, faBell, faFlagCheckered, faDatabase, faChartPie, faTowerBroadcast, faBan, faFeather, faBullhorn, faServer} from "@fortawesome/free-solid-svg-icons";
+import {Link, useNavigate} from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
 
-
-const Header = ({onToggleAside, onToggleTheme, currrentTheme}) => {
+const Header = ({onToggleAside, onToggleTheme, currentTheme}) => {
+  const navigate = useNavigate();
   return (
      <header>
+      
       <div className="header-left">
         <FontAwesomeIcon icon={faBars} className="bar-icon" onClick={onToggleAside}/>
         <div className="logo-div">
           <img
-            src="https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762309977977-otthorD.png"
-            alt=""
+            src={
+              currentTheme
+                ? "https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762309977977-otthorD.png"
+                : "https://the-book-sourcing-2025.s3.ap-southeast-1.amazonaws.com/community/1762309925604-otthor.png"
+            }
             className="logo-div-img"
+            alt="Logo"
           />
         </div>
       </div>
       <div className="header-middle">
-        <div className="search-box">
-          <input type="text" id="search-input" />
-        </div>
-        <button className='search-button'>
-          <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon"/>
-        </button>
+        <Search />
       </div>
+      <div className="overlay-results"></div>
       <div className="header-right">
-        <FontAwesomeIcon icon={currrentTheme ? faMoon : faSun} onClick={onToggleTheme}/>
+        <FontAwesomeIcon icon={faArrowRightFromBracket} onClick={() => navigate('/Login')}/>
+        <FontAwesomeIcon icon={currentTheme ? faMoon : faSun} onClick={onToggleTheme}/>
         <FontAwesomeIcon icon={faInbox} />
         <div style={{display:"flex", alignItems:"center", paddingBottom:"5px"}}><big style={{opacity:0.5}}>|</big></div> 
         <div className="profile-div">
@@ -44,5 +48,192 @@ const Header = ({onToggleAside, onToggleTheme, currrentTheme}) => {
  
   );
 };
+
+const Search = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const wrapperRef = useRef(null);
+  const navigate = useNavigate();
+
+  const searchQuery = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    if (value.trim() === "") {
+      setFilteredResults([]);
+      return;
+    }
+
+    const results = ResultsDisplay.filter(
+      (item) =>
+        item.title.toLowerCase().includes(value) ||
+        item.description.toLowerCase().includes(value)
+    );
+    setFilteredResults(results);
+  };
+
+  // Close results when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setShowResults(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const fireQuery = () => {
+      if(filteredResults.length > 0){
+          navigate(filteredResults[0].link);
+          const recentVisitDataLink = filteredResults[0].link;
+          const recentVisitDataId = filteredResults[0].id;
+          const recentVisitDataTitle = filteredResults[0].title;
+          const recentVisitDataIcon = filteredResults[0].icon;
+          const recentVisitDescription = filteredResults[0].description;
+          const recentVist = JSON.parse(localStorage.getItem('recentVisit')) || [];
+          const updateRecentVisit = [{recentVisitDataId, recentVisitDataTitle, recentVisitDataLink, recentVisitDataIcon, recentVisitDescription}, ...recentVist].slice(0,5);
+          localStorage.setItem("recentVisit", JSON.stringify(updateRecentVisit));
+      } 
+      else{
+        navigate(`/${searchTerm}`);
+        const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+        const updateHistory = [searchTerm, ...history].slice(0,5);
+        localStorage.setItem("searchHistory", JSON.stringify(updateHistory));
+      }
+  }
+
+  return (
+     <>
+        <div ref={wrapperRef} className="search-box">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Search for resource, products, page, docs, and more"
+            onChange={searchQuery}
+            onFocus={() => setShowResults(true)}
+          />
+          {showResults && (
+            <div className="results">
+              <TopResults results={filteredResults} />
+              <div className="recent-search dev-res">
+                <label>Searches History</label>
+              </div>
+              <div className="search-result-visit dev-res">
+                <label>
+                  <FontAwesomeIcon icon={faMagnifyingGlassChart} /> Recent Searches
+                </label>
+              </div>
+              <PoplularSearch />
+            </div>
+          )}
+        </div>
+        <button className='search-button' onClick={fireQuery}>
+              <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon" />
+        </button>
+      </>
+  );
+}
+
+
+const TopResults = ({results}) => {
+  if (results.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className='search-result dev-res'>
+      <label><FontAwesomeIcon icon={faChartSimple} /> Top Result for you</label>
+      <ul className='query-result-ul'>
+        {results.map(item => (
+          <QueryCard 
+            key={item.id} 
+            icon={item.icon} 
+            link={item.link} 
+            description={item.description} 
+            title={item.title} 
+          />
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+const QueryCard = ({id, icon, link, description, title}) => {
+    const navigate = useNavigate();
+    const handleClick = () => {
+        navigate(link);
+         const recentVist = JSON.parse(localStorage.getItem('recentVisit')) || [];
+          const updateRecentVisit = [{ id, title, link, icon, description }, ...recentVist].slice(0,5);
+          localStorage.setItem("recentVisit", JSON.stringify(updateRecentVisit));
+    }
+    return (
+      <li className = 'query-card' onClick={handleClick}>
+           <FontAwesomeIcon icon={icon}  className='search-icon-query'/> 
+           <div className = 'dev-info'>
+              <p className='query-title'>{title}</p>
+              <p className='query-description'>{description}</p>
+           </div>
+      </li>
+    )
+ }
+
+ const ResultsDisplay = [
+  {id:1, icon:faChartPie, link:'/Dashboard', description: "Central hub with panels, widgets, charts, and key metrics.", title: "Dashboard" },
+  {id:2, icon:faSliders, link:'/Maintenance', description: "System maintenance tools and configuration management.", title: "Maintenance" },
+  {id:3, icon:faBug, link:'/Error', description: "Monitor and review issues, errors, and troubleshooting logs.", title: "Error" },
+  {id:4, icon:faDatabase, link:'/Database', description: "Access and manage database records, pending updates, and edits.", title: "Database" },
+  {id:5, icon:faUser, link:'/User', description: "View and manage user profiles, pending approvals, and edits.", title: "User" },
+  {id:6, icon:faBook, link:'/Book', description: "Browse and update book records, pending entries, and edits.", title: "Book" },
+  {id:7, icon:faComment, link:'/Comment', description: "Manage comments including pending submissions and edits.", title: "Comment" },
+  {id:8, icon:faComments, link:'/Reply', description: "Review and edit replies, including pending and updated entries.", title: "Reply" },
+  {id:9, icon:faUsers, link:'/Community', description: "Community management with pending requests and editable records.", title: "Community" },
+  {id:10, icon:faCommentDots, link:'/Feedback', description: "Feedback dashboard with panels, widgets, and analytics charts.", title: "Feedback" },
+  {id:11, icon:faFlag, link:'/Report', description: "Reporting tools with structured panels, widgets, and charts.", title: "Report" },
+  {id:12, icon:faNewspaper, link:'/Article', description: "Article management with dashboards, widgets, and analytics.", title: "Article" },
+  {id:14, icon:faBell, link:'/Notification', description: "Notification center with panels, widgets, and activity charts.", title: "Notification" }
+];
+
+
+ const PoplularSearch = () => {
+    return(
+        <div className='popular-search dev-res'>
+               <label>  <FontAwesomeIcon icon={faFireFlameCurved} /> Popular Searches</label>
+          
+               <ul className='popular-ul'>
+                    {PopularResult.map(item => (
+                      <PopularCard key={item.id} icon={item.icon} description={item.description} title={item.title} link={item.link}/>
+                    ))}
+               </ul>
+        </div>
+    )
+ }
+ const PopularCard = ({icon, link, description, title}) => {
+    const navigate = useNavigate();
+    return (
+      <li className = 'pop-card' onClick={()=>navigate(link)}>
+           <FontAwesomeIcon icon={icon}  className='search-icon-query'/> 
+           <div className = 'dev-info'>
+              <p className='query-title'>{title}</p>
+              <p className='query-description'>{description}</p>
+           </div>
+      </li>
+    )
+ }
+
+
+ const PopularResult = [
+  {id:1, icon:faBan, link:'/Dashboard', description: "Central hub with panels, widgets, charts, and key metrics.", title: "Pending User" },
+  {id:2, icon:faFeather, link:'/Maintenance', description: "System maintenance tools and configuration management.", title: "Upload Article" },
+  {id:3, icon:faBullhorn, link:'/Error', description: "Monitor and review issues, errors, and troubleshooting logs.", title: "Alert System Notification" },
+  {id:4, icon:faServer, link:'/Database', description: "Access and manage database records, pending updates, and edits.", title: "Cloud Storage" }
+];
+
+
+
+
 
 export default Header;

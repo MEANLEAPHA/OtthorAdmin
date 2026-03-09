@@ -5,7 +5,10 @@ import Main from '../src/assets/components/Main';
 import Footer from '../src/assets/components/Footer';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Error from './assets/components/pages/Error';
-import './assets/css/Page.css'
+import './assets/css/Page.css';
+
+import Login from './assets/components/pages/logs/Login';
+import Signup from './assets/components/pages/logs/Signup';
 
 import UserInsight from './assets/components/pages/UserInsight';
     import Book from './assets/components/pages/page_detail/Book';
@@ -24,12 +27,17 @@ import FeedbackAndReport from './assets/components/pages/FeedbackAndReport';
 import { useState } from 'react';
 
 
+
+
 const Page = () =>{
     return(
         <BrowserRouter>
             <Routes>
                 <Route path='/' element={<App/>}></Route>
                 <Route path='/Dashboard' element={<App/>}></Route>
+
+                <Route path="/Login" element={<Login/>}></Route>
+                <Route path="/SignUp" element={<Signup/>}></Route>
 
                 <Route path='/FeedbackAndReport' element={<FeedbackAndReport />}></Route> 
                     <Route path='/Feedback' element={<Feedback />}></Route>
@@ -57,38 +65,48 @@ const Page = () =>{
  
 const App = () =>{
 
-    const [showAside, setShowAside] = useState(true);
-    const toggleAside = () =>{
-        setShowAside(prev => !prev)
-    }
-
-    const [darkMode, setDarkMode] = useState(()=>{
-        return localStorage.getItem("darkMode") === "true"; 
-    });
-
-    useEffect(
-        () => {
-            if(darkMode){
-                document.body.classList.add("dark-theme")
-            }
-            else{
-                document.body.classList.remove("dark-theme")
-            }
-            localStorage.setItem("darkMode", darkMode);
+    const [showMaxAside, setMaxAside] = useState(() => {
+            return localStorage.getItem("maxAside") === "true";
+        })
+    
+        useEffect(()=>{
+            localStorage.setItem("maxAside", showMaxAside)
         },
-        [darkMode]
-    );
-
-    const toggleTheme = () =>{
-        setDarkMode(prev => !prev)
-    }
+        [showMaxAside]
+        );
+    
+        const toggleAside = () =>{
+                setMaxAside(prev => !prev)
+        }
+    
+    
+         const [darkMode, setDarkMode] = useState( () => {
+                return localStorage.getItem("darkMode") === "true"; 
+            });
+        
+            useEffect(
+                () => {
+                    if(darkMode){
+                        document.body.classList.add("dark-theme")
+                    }
+                    else{
+                        document.body.classList.remove("dark-theme")
+                    }
+                    localStorage.setItem("darkMode", darkMode);
+                },
+                [darkMode]
+            );
+         
+            const toggleTheme = () =>{
+                setDarkMode(prev => !prev)
+            }
     return(
         <>
-        <body>
-            <Header onToggleAside={toggleAside} onToggleTheme={toggleTheme} currrentTheme={darkMode}/>
-            <Main appendValue={showAside}/>
+
+            <Header onToggleAside={toggleAside} onToggleTheme={toggleTheme} currentTheme={darkMode}/>
+            <Main appendValue={showMaxAside}/>
             <Footer />
-        </body>
+     
         </>
     )
 }
