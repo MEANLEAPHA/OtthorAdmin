@@ -24,8 +24,8 @@ import FeedbackAndReport from './assets/components/pages/FeedbackAndReport';
     import Feedback from './assets/components/pages/page_detail/Feedback';
     import Report from './assets/components/pages/page_detail/Report';
 
-import Login from './assets/components/pages/logs/Login';
-import Signup from './assets/components/pages/logs/Signup';
+// import Login from './assets/components/pages/logs/Login';
+// import Signup from './assets/components/pages/logs/Signup';
 import { useState } from 'react';
 
 
@@ -38,8 +38,8 @@ const Page = () =>{
                 <Route path='/' element={<App/>}></Route>
                 <Route path='/Dashboard' element={<App/>}></Route>
 
-                <Route path="/Login" element={<Login/>}></Route>
-                <Route path="/SignUp" element={<Signup/>}></Route>
+                {/* <Route path="/Login" element={<Login/>}></Route>
+                <Route path="/SignUp" element={<Signup/>}></Route> */}
 
                 <Route path='/FeedbackAndReport' element={<FeedbackAndReport />}></Route> 
                     <Route path='/Feedback' element={<Feedback />}></Route>
