@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeLowVision} from "@fortawesome/free-solid-svg-icons";
-import '../../../css/logs/Login.css';
+import '../../../css/log/Login.css';
 import {useNavigate} from "react-router-dom";
 
 const Login = () => {
