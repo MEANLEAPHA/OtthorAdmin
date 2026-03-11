@@ -1,7 +1,7 @@
 import React from "react";
 import "../css/Header.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faMagnifyingGlass, faChevronDown, faMoon, faInbox, faSun, faArrowRightFromBracket, faFireFlameCurved, faMagnifyingGlassChart, faChartSimple, faGauge,faSliders, faFlag, faCommentDots, faBug, faUser, faBook, faNewspaper, faUsers, faComments, faComment, faBell, faFlagCheckered, faDatabase, faChartPie, faTowerBroadcast, faBan, faFeather, faBullhorn, faServer, faClockRotateLeft, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import { faBars, faMagnifyingGlass, faChevronDown, faMoon, faInbox, faSun, faArrowRightFromBracket, faFireFlameCurved, faMagnifyingGlassChart, faTimesCircle,faChartSimple, faGauge,faSliders, faFlag, faCommentDots, faBug, faUser, faBook, faNewspaper, faUsers, faComments, faComment, faBell, faFlagCheckered, faDatabase, faChartPie, faTowerBroadcast, faBan, faFeather, faBullhorn, faServer, faClockRotateLeft, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {Link, useNavigate} from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 
@@ -48,6 +48,7 @@ const Header = ({onToggleAside, onToggleTheme, currentTheme}) => {
  
   );
 };
+
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -113,16 +114,37 @@ const Search = () => {
       }
   }
 
+  const clearSearch = () => {
+    setSearchTerm("");
+    setFilteredResults([]);
+    // setShowResults(false);
+  };
   return (
      <>
         <div ref={wrapperRef} className="search-box">
           <input
             type="text"
             id="search-input"
+            value={searchTerm}  
             placeholder="Search for resource, products, page, docs, and more"
             onChange={searchQuery}
             onFocus={() => setShowResults(true)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault(); // prevent form submission if inside a form
+                fireQuery();
+              }
+            }}
           />
+          {searchTerm && (
+          <button
+            type="button"
+            className="btn-clear-value"
+            onClick={clearSearch}
+          >
+            <FontAwesomeIcon icon={faTimesCircle} />
+          </button>
+        )}
           {showResults && (
             <div className="results">
               <TopResults results={filteredResults} />
@@ -132,7 +154,7 @@ const Search = () => {
             </div>
           )}
         </div>
-        <button className='search-button' onClick={fireQuery}>
+        <button className='search-button' onClick={fireQuery} >
               <FontAwesomeIcon icon={faMagnifyingGlass} className="search-icon" />
         </button>
       </>
@@ -164,11 +186,11 @@ const RecentSearch = () => {
 
   return(
     <div className="search-result-visit dev-res">
-                <div>
+                <div className='label-flex'>
                   <label><FontAwesomeIcon icon={faMagnifyingGlassChart} /> Recent Searches</label>
                   <button onClick={handelClearAll}>Clear All</button>
                 </div>
-                <ul>
+                <ul className='history-ul'>
                   {recentData.map((item, index) => (
                     <RecentCard key={index} icon={item.icon} link={item.link} description={item.description} title={item.title} onDelete={handleDelete}/>
                   ))}
@@ -193,13 +215,15 @@ const RecentCard = ({description,link,icon,title, onDelete}) => {
           localStorage.setItem("recentVisit", JSON.stringify(updateRecentVisit));
     }
   return(
-      <li className = 'query-card'  onClick={handleClick}>
-          <FontAwesomeIcon icon={icon}  className='search-icon-query'/> 
-           <div className = 'dev-info'>
-              <p className='query-title'>{title}</p>
-              <p className='query-description'>{description}</p>
+      <li className = 'history-card'  onClick={handleClick}>
+        <div className='history-card-info'> 
+              <div><FontAwesomeIcon icon={icon}  className='search-icon-query'/> </div>
+            <div className = 'dev-info'>
+                  <p className='query-title'>{title}</p>
+                  <p className='query-description'>{description}</p>
            </div>
-           <FontAwesomeIcon icon={faTrashCan}  className='delete-icon' onClick={(e)=>{onDelete(title); e.stopPropagation()}}/> 
+        </div>
+           <FontAwesomeIcon icon={faTrashCan}  className='history-icon-trash' onClick={(e)=>{onDelete(title); e.stopPropagation()}}/> 
       </li>
   )
 }
@@ -227,8 +251,8 @@ const HistorySearch = () => {
   }
   return(
       <div className="recent-search dev-res">
-          <div><label>Searches History</label> <button onClick={handelClearAll}>Clear All</button></div>
-          <ul>
+          <div className='label-flex'><label>Searches History</label> <button onClick={handelClearAll}>Clear All</button></div>
+          <ul class='history-ul'>
             {historyData.map((item,index) => (
               <HistoryCard key={index} title={item} onDelete={handleDelete}/>
             ))}
@@ -254,12 +278,14 @@ const HistoryCard = ({title, onDelete}) => {
           localStorage.setItem("searchHistory", JSON.stringify(updateRecentVisit));
     }
     return (
-      <li className = 'query-card' onClick={handleClick}>
-           <FontAwesomeIcon icon={faClockRotateLeft}  className='search-icon-query'/> 
-           <div className = 'dev-info'>
+      <li className = 'history-card' onClick={handleClick}>
+        <div className='history-card-info'>
+            <FontAwesomeIcon icon={faClockRotateLeft}  className='search-icon-query'/> 
+           
               <p className='query-title'>{title}</p>
-           </div>
-           <FontAwesomeIcon icon={faTrashCan}  className='delete-icon' onClick={(e)=>{onDelete(title); e.stopPropagation()}}/> 
+           
+        </div>
+           <FontAwesomeIcon icon={faTrashCan}  className='history-icon-trash' onClick={(e)=>{onDelete(title); e.stopPropagation()}}/> 
       </li>
     )
  };
