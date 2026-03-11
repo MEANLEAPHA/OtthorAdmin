@@ -32,7 +32,7 @@ const Signup = () => {
     // }
     const Resgister = async () =>{
         try{
-            const response = await fetch('https://otthoradmin.onrender.com/api/register', {
+            const response = await fetch('https://thebooksourcings.onrender.com/register', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
