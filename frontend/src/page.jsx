@@ -7,8 +7,7 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Error from './assets/components/pages/Error';
 import './assets/css/Page.css';
 
-import Login from './assets/components/pages/logs/Login';
-import Signup from './assets/components/pages/logs/Signup';
+
 
 import UserInsight from './assets/components/pages/UserInsight';
     import Book from './assets/components/pages/page_detail/Book';
@@ -24,6 +23,9 @@ import Broadcast from './assets/components/pages/Broadcast';
 import FeedbackAndReport from './assets/components/pages/FeedbackAndReport';
     import Feedback from './assets/components/pages/page_detail/Feedback';
     import Report from './assets/components/pages/page_detail/Report';
+
+import Login from './assets/components/pages/logs/Login';
+import Signup from './assets/components/pages/logs/Signup';
 import { useState } from 'react';
 
 
