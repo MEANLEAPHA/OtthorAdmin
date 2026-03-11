@@ -1,4 +1,4 @@
-import React from "react";
+import React, { use, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeLowVision} from "@fortawesome/free-solid-svg-icons";
 import '../../../css/log/Login.css';
@@ -6,10 +6,6 @@ import {useNavigate} from "react-router-dom";
 
 const Signup = () => {
     const navigate = useNavigate();
-    var username = 'leap';
-    var email = '1WYdD@example.com';
-    var password = '123456';
-    var confirmPassword = '123456';
     var inputUsername = '';
     var inputEmail = '';
     var inputPassword = '';
@@ -28,9 +24,33 @@ const Signup = () => {
             inputConfirmPassword = e.target.value;
        }
     }
-    const handleLogin = () =>{
-        if(inputUsername === username && inputEmail === email && inputPassword === password && inputConfirmPassword === confirmPassword){
-            navigate('/Dashboard');
+
+    // const handleLogin = () =>{
+    //     if(inputUsername === username && inputEmail === email && inputPassword === password && inputConfirmPassword === confirmPassword){
+    //         navigate('/Dashboard');
+    //     }
+    // }
+    const Resgister = async () =>{
+        try{
+            const response = await fetch('https://otthoradmin.onrender.com/api/register', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  username: inputUsername,
+                  email: inputEmail,
+                  password: inputPassword,
+                  timezone: 'PP'
+                }),
+              });
+              if(response.status === 201){
+                alert(response.message);
+                // navigate('/Login');
+              }
+        }
+        catch(error){
+            console.log(error);
         }
     }
     return(
@@ -62,7 +82,7 @@ const Signup = () => {
                     <label>I agree to the <u style={{color:'orange'}}>Terms & Conditions</u></label>
                 </div>
                 <div className='div-input div-submit'>
-                    <button onClick={handleLogin}>Register</button>
+                    <button onClick={Resgister}>Register</button>
                 </div>
                 <p className='warm-welcome-p'>Alreay a member? <u style={{color:'green', cursor:'pointer'}} onClick={() => {navigate('/Login')}}>Login</u></p>
             </form>

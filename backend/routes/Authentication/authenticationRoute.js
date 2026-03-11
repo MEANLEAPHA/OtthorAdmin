@@ -24,8 +24,8 @@ const {authMiddleware} = require('../../middleware/authMiddleware');
 const Authentication = (app) => {
 
 
-    app.post('/register', createMember);
-    app.post('/login', loginMember);
+    app.post('/api/register', createMember);
+    app.post('/api/login', loginMember);
 
   // app.get('/getFullRegisterData', authMiddleware,  getFullRegisterData);
   // app.get('/getFullRegisterDataByQid/:memberQid',  getFullRegisterDataByQid);
