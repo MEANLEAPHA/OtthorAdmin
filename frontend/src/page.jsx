@@ -23,8 +23,8 @@ import Broadcast from './assets/components/pages/Broadcast';
 import FeedbackAndReport from './assets/components/pages/FeedbackAndReport';
     import Feedback from './assets/components/pages/page_detail/Feedback';
     import Report from './assets/components/pages/page_detail/Report';
-import Login from './assets/components/pages/log/Login';
-import Signup from './assets/components/pages/log/Signup';
+import Login from './assets/components/pages/Authentication/Login';
+import Signup from './assets/components/pages/Authentication/Signup';
 import { useState } from 'react';
 
 

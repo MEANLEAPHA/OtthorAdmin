@@ -12,6 +12,8 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
+const {Authentication} = require("./routes/Authentication/authenticationRoute");
+Authentication(app);
 
 // Start Server
 const port = 3000;
