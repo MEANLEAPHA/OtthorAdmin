@@ -43,7 +43,7 @@ const Signup = () => {
 
       if (response.status === 201) {
         alert(data.message || "Registration successful!");
-        navigate("/Login");
+        // navigate("/Login");
       } else {
         alert(data.message || "Registration failed.");
       }

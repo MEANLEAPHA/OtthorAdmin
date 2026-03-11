@@ -10,7 +10,7 @@ const { createToken } = require('../../service/token/jwtHelp'); // adjust path i
 // login logical 
 const loginMember = async (req, res) => {
     try {
-        const { email, password, timezone } = req.body;
+        const { email, password } = req.body;
 
         if (!email || !password) {
             return res.status(400).json(
@@ -37,24 +37,24 @@ const loginMember = async (req, res) => {
             return res.status(403).json({
                 message: "Please verify your Email before logging in.",
                 Result: "False",
-                needsVerification: true // Optional flag to indicate verification required
+                needsVerification: true 
             });
         }
 
-        if (timezone) {
-            await db.query("UPDATE users SET timezone = ? WHERE user_id = ?", [timezone, user.user_id]);
-            user.timezone = timezone; // Ensure updated timezone is included
-        }
+        // if (timezone) {
+        //     await db.query("UPDATE users SET timezone = ? WHERE user_id = ?", [timezone, user.user_id]);
+        //     user.timezone = timezone; 
+        // }
 
         const token = createToken({
             user_id: user.user_id,
             username: user.username,
-            email: user.email,
-            timezone: user.timezone || 'UTC'
+            email: user.email
+            // timezone: user.timezone || 'UTC'
         });
 
 
-        res.json({
+        res.status(201).json({
             message: "Login Successful :)",
             token,
             user_id: user.user_id,
