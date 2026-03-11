@@ -1,7 +1,7 @@
 import React from "react";
 import "../css/Header.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faMagnifyingGlass, faChevronDown, faMoon, faInbox, faSun, faArrowRightFromBracket, faFireFlameCurved, faMagnifyingGlassChart, faChartSimple, faGauge,faSliders, faFlag, faCommentDots, faBug, faUser, faBook, faNewspaper, faUsers, faComments, faComment, faBell, faFlagCheckered, faDatabase, faChartPie, faTowerBroadcast, faBan, faFeather, faBullhorn, faServer} from "@fortawesome/free-solid-svg-icons";
+import { faBars, faMagnifyingGlass, faChevronDown, faMoon, faInbox, faSun, faArrowRightFromBracket, faFireFlameCurved, faMagnifyingGlassChart, faChartSimple, faGauge,faSliders, faFlag, faCommentDots, faBug, faUser, faBook, faNewspaper, faUsers, faComments, faComment, faBell, faFlagCheckered, faDatabase, faChartPie, faTowerBroadcast, faBan, faFeather, faBullhorn, faServer, faClockRotateLeft, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {Link, useNavigate} from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 
@@ -53,6 +53,7 @@ const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+ 
   const wrapperRef = useRef(null);
   const navigate = useNavigate();
 
@@ -89,16 +90,22 @@ const Search = () => {
   const fireQuery = () => {
       if(filteredResults.length > 0){
           navigate(filteredResults[0].link);
-          const recentVisitDataLink = filteredResults[0].link;
-          const recentVisitDataId = filteredResults[0].id;
-          const recentVisitDataTitle = filteredResults[0].title;
-          const recentVisitDataIcon = filteredResults[0].icon;
-          const recentVisitDescription = filteredResults[0].description;
-          const recentVist = JSON.parse(localStorage.getItem('recentVisit')) || [];
-          const updateRecentVisit = [{recentVisitDataId, recentVisitDataTitle, recentVisitDataLink, recentVisitDataIcon, recentVisitDescription}, ...recentVist].slice(0,5);
+          const dataVisit = {title: filteredResults[0].title, link: filteredResults[0].link, icon: filteredResults[0].icon, description: filteredResults[0].description};
+          const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
+          const recentVisit = JSON.parse(localStorage.getItem('recentVisit')) || [];
+          const updateHistory = [searchTerm, ...history].slice(0,5);
+          localStorage.setItem("searchHistory", JSON.stringify(updateHistory));
+          if(recentVisit.some((item) => item.link === filteredResults[0].link)){
+            const remainData = recentVisit.filter((item) => item.link !== filteredResults[0].link);
+            const moveToTop = [dataVisit, ...remainData].slice(0,5);
+            localStorage.setItem("recentVisit", JSON.stringify(moveToTop));
+             return;
+          };
+          const updateRecentVisit = [dataVisit, ...recentVisit].slice(0,5);
           localStorage.setItem("recentVisit", JSON.stringify(updateRecentVisit));
       } 
       else{
+        if(searchTerm === '') return;
         navigate(`/${searchTerm}`);
         const history = JSON.parse(localStorage.getItem('searchHistory')) || [];
         const updateHistory = [searchTerm, ...history].slice(0,5);
@@ -119,14 +126,8 @@ const Search = () => {
           {showResults && (
             <div className="results">
               <TopResults results={filteredResults} />
-              <div className="recent-search dev-res">
-                <label>Searches History</label>
-              </div>
-              <div className="search-result-visit dev-res">
-                <label>
-                  <FontAwesomeIcon icon={faMagnifyingGlassChart} /> Recent Searches
-                </label>
-              </div>
+              <HistorySearch />
+              <RecentSearch />
               <PoplularSearch />
             </div>
           )}
@@ -138,8 +139,131 @@ const Search = () => {
   );
 }
 
+const RecentSearch = () => {
+  const [recentData, setRecentData] = useState([]);
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("recentVisit")) || [];
+    setRecentData(data);
+  }, []);
+  
+   const handleDelete = (title) => {
+      const updateData = recentData.filter((item) => item.title !== title);
+       localStorage.setItem("recentVisit", JSON.stringify(updateData));
+      setRecentData(updateData);
+     
+   }
+   const handelClearAll = () => {
+      const update = recentData.slice( recentData.length);
+      localStorage.setItem("recentVisit", JSON.stringify(update));
+      setRecentData(update);
+   }
 
-const TopResults = ({results}) => {
+  if(recentData.length === 0){
+    return null;
+  }
+
+  return(
+    <div className="search-result-visit dev-res">
+                <div>
+                  <label><FontAwesomeIcon icon={faMagnifyingGlassChart} /> Recent Searches</label>
+                  <button onClick={handelClearAll}>Clear All</button>
+                </div>
+                <ul>
+                  {recentData.map((item, index) => (
+                    <RecentCard key={index} icon={item.icon} link={item.link} description={item.description} title={item.title} onDelete={handleDelete}/>
+                  ))}
+                </ul>
+      </div>
+  )
+}
+
+const RecentCard = ({description,link,icon,title, onDelete}) => {
+  const navigate = useNavigate();
+   const handleClick = () => {
+        navigate(link);
+        const currentData = { title, link, icon, description };
+         const recentVisit = JSON.parse(localStorage.getItem('recentVisit')) || [];
+           if(recentVisit.some((item) => item.link === link)){
+            const remainData = recentVisit.filter((item) => item.link !== link);
+            const moveToTop = [currentData, ...remainData].slice(0,5);
+            localStorage.setItem("recentVisit", JSON.stringify(moveToTop));
+             return;
+          };
+          const updateRecentVisit = [currentData, ...recentVisit].slice(0,5);
+          localStorage.setItem("recentVisit", JSON.stringify(updateRecentVisit));
+    }
+  return(
+      <li className = 'query-card'  onClick={handleClick}>
+          <FontAwesomeIcon icon={icon}  className='search-icon-query'/> 
+           <div className = 'dev-info'>
+              <p className='query-title'>{title}</p>
+              <p className='query-description'>{description}</p>
+           </div>
+           <FontAwesomeIcon icon={faTrashCan}  className='delete-icon' onClick={(e)=>{onDelete(title); e.stopPropagation()}}/> 
+      </li>
+  )
+}
+const HistorySearch = () => {
+   const [historyData, setHistoryData] = useState([]);
+   useEffect(() => {
+      const data = JSON.parse(localStorage.getItem("searchHistory")) || [];
+      setHistoryData(data);
+   }, []);
+ 
+   const handleDelete = (title) => {
+      const updateData = historyData.filter((item) => item !== title);
+       localStorage.setItem("searchHistory", JSON.stringify(updateData));
+      setHistoryData(updateData);
+     
+   }
+   const handelClearAll = () => {
+      const update = historyData.slice( historyData.length);
+      localStorage.setItem("searchHistory", JSON.stringify(update));
+      setHistoryData(update);
+   }
+
+  if(historyData.length === 0){
+    return null;
+  }
+  return(
+      <div className="recent-search dev-res">
+          <div><label>Searches History</label> <button onClick={handelClearAll}>Clear All</button></div>
+          <ul>
+            {historyData.map((item,index) => (
+              <HistoryCard key={index} title={item} onDelete={handleDelete}/>
+            ))}
+          </ul>
+      </div>
+  )
+  
+}
+
+const HistoryCard = ({title, onDelete}) => {
+  const navigate = useNavigate();
+   const handleClick = () => {
+        navigate(`/${title}`);
+        
+         const recentVisit = JSON.parse(localStorage.getItem('searchHistory')) || [];
+           if(recentVisit.some((item) => item === title)){
+            const remainData = recentVisit.filter((item) => item !== title);
+            const moveToTop = [title, ...remainData].slice(0,5);
+            localStorage.setItem("searchHistory", JSON.stringify(moveToTop));
+             return;
+          };
+          const updateRecentVisit = [title, ...recentVisit].slice(0,5);
+          localStorage.setItem("searchHistory", JSON.stringify(updateRecentVisit));
+    }
+    return (
+      <li className = 'query-card' onClick={handleClick}>
+           <FontAwesomeIcon icon={faClockRotateLeft}  className='search-icon-query'/> 
+           <div className = 'dev-info'>
+              <p className='query-title'>{title}</p>
+           </div>
+           <FontAwesomeIcon icon={faTrashCan}  className='delete-icon' onClick={(e)=>{onDelete(title); e.stopPropagation()}}/> 
+      </li>
+    )
+ };
+ const TopResults = ({results}) => {
   if (results.length === 0) {
     return null;
   }
@@ -166,8 +290,15 @@ const QueryCard = ({id, icon, link, description, title}) => {
     const navigate = useNavigate();
     const handleClick = () => {
         navigate(link);
-         const recentVist = JSON.parse(localStorage.getItem('recentVisit')) || [];
-          const updateRecentVisit = [{ id, title, link, icon, description }, ...recentVist].slice(0,5);
+        const currentData = { id, title, link, icon, description };
+         const recentVisit = JSON.parse(localStorage.getItem('recentVisit')) || [];
+           if(recentVisit.some((item) => item.link === link)){
+            const remainData = recentVisit.filter((item) => item.link !== link);
+            const moveToTop = [currentData, ...remainData].slice(0,5);
+            localStorage.setItem("recentVisit", JSON.stringify(moveToTop));
+             return;
+          };
+          const updateRecentVisit = [currentData, ...recentVisit].slice(0,5);
           localStorage.setItem("recentVisit", JSON.stringify(updateRecentVisit));
     }
     return (

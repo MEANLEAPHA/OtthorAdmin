@@ -70,8 +70,43 @@ const Section = () =>{
         <section>
              <article className='article-header'>
                 <FontAwesomeIcon icon={faChevronRight} style={{fontSize:'small'}}/> <label onClick={()=>{navigate('/UserInsight')}} className='link-page'>User Insight</label> / <label onClick={()=>{navigate('/Book')}} className='link-page'>Book</label>
+                <FetchAPI />
             </article>
         </section> 
         </>
+    )
+}
+
+const FetchAPI = () => {
+    const [book ,setBook] = useState([]);
+    useEffect(()=>{
+        fetchData();
+    },[]);
+
+    const fetchData = async () => {
+        try{
+            var url = "https://gutendex.com/books/?sort=popular";
+            fetch(url)
+            .then((res) => res.json())
+            .then((data) => setBook(data.results))
+            .catch((error) => console.error(error))
+        }
+        catch(error){
+            console.error(error)
+        }
+    }
+    return(
+        <div>
+            <h1>Popular Books</h1>
+            <div style={{display:'flex', flexWrap:'wrap', justifyContent:'space-between'}}>
+                {book.map((item) => (
+                <div key={item.id} style={{textAlign:'center', display:'flex', flexDirection:'column', alignItems:'center', margin:'10px'}}>
+                <img src={item.formats["image/jpeg"]} alt={item.title} />
+                <div>{item.title}</div>
+                </div>
+            ))}
+            </div>
+        </div>
+
     )
 }
