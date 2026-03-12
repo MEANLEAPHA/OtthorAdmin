@@ -1,15 +1,14 @@
-// Import mysql
 const e = require('express');
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
-// Create a connection pool
+
 const dbconfig = mysql.createPool({
-  host: env.DB_HOST,
-  user: env.DB_USER,
-  password: env.DB_PASSWORD,
-  database: env.DB_NAME,
-  port: env.DB_PORT,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
 
   waitForConnections: true,
   connectionLimit: 2,
@@ -20,5 +19,5 @@ const dbconfig = mysql.createPool({
   keepAliveInitialDelay: 0    
 });
 
-// Export the database
-module.exports = dbconfig; 
+
+module.exports = dbconfig;
