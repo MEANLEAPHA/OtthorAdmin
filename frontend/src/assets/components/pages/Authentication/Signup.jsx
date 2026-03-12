@@ -24,7 +24,7 @@ const Signup = () => {
   const Register = async () => {
     try {
       const response = await fetch(
-        "https://thebooksourcings.onrender.com/register",
+        "https://otthoradmin.onrender.com/api/register",
         {
           method: "POST",
           headers: {
