@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const db = require('../../config/db');
 require('dotenv').config();
 
-const { sendPinCodeEmail, sendResendPinEmail, sendResetPasswordPinEmail} = require('../util/email');
+const { sendPinCodeEmail, sendResendPinEmail, sendResetPasswordPinEmail} = require('../../service/mail/email');
 const { createToken } = require('../../service/token/jwtHelp'); // adjust path if needed
 
 // const {uploadToS3, deleteFromS3 } = require("../middleware/AWSuploadMiddleware");
