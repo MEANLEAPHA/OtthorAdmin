@@ -9,69 +9,79 @@ const { createToken } = require('../../service/token/jwtHelp'); // adjust path i
 // const {uploadToS3, deleteFromS3 } = require("../middleware/AWSuploadMiddleware");
 // login logical 
 const loginMember = async (req, res) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json(
-                { message: "Please provide Email and Password below!"}
-            );
-        }
-
-        const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-        if (users.length === 0) {
-            return res.status(404).json(
-              { message: "Sorry! No user found with this email" }
-            );
-        } 
-
-        const user = users[0];
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).json(
-                { message: "Invalid password! Please try again"}
-            );
-        }
-
-        if (user.status !== 'verified') {
-            return res.status(403).json({
-                message: "Please verify your Email before logging in.",
-                Result: "False",
-                needsVerification: true 
-            });
-        }
-
-        // if (timezone) {
-        //     await db.query("UPDATE users SET timezone = ? WHERE user_id = ?", [timezone, user.user_id]);
-        //     user.timezone = timezone; 
-        // }
-
-        const token = createToken({
-            user_id: user.user_id,
-            username: user.username,
-            email: user.email
-            // timezone: user.timezone || 'UTC'
-        });
-
-
-        res.status(201).json({
-            message: "Login Successful :)",
-            token,
-            user_id: user.user_id,
-            username: user.username,
-            timezone: user.timezone || 'UTC',
-            Result: "True"
-        });
-
-    } catch (error) {
-        console.error("Error in loginMember:", error);
-        res.status(500).json(
-            { message: "Internal server error. Our team is working on it. sorry :(", Result: "False" }
-        );
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required"
+      });
     }
+
+    const [users] = await db.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    const user = users[0];
+
+    const passwordValid = await bcrypt.compare(password, user.password);
+
+    if (!passwordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password"
+      });
+    }
+
+    if (user.status !== "verified") {
+      return res.status(403).json({
+        success: false,
+        message: "Please verify your email before logging in",
+        needsVerification: true
+      });
+    }
+
+    const token = createToken({
+      user_id: user.user_id,
+      username: user.username,
+      email: user.email
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      user_id: user.user_id,
+      username: user.username,
+      timezone: user.timezone || "UTC"
+    });
+
+  } catch (error) {
+
+    console.error("loginMember error:", error);
+
+    await logError(
+      error.message,
+      error.code,
+      "loginMember",
+      error.stack
+    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
 };
-
-
 
 //Register Or Signup
 const createMember = async (req, res) => {
@@ -79,69 +89,123 @@ const createMember = async (req, res) => {
     const { username, email, password, timezone } = req.body;
 
     if (!username || !email || !password) {
-      return res.status(400).json({ message: "Please Provide all the required fields below", Result: "False" });
+      return res.status(400).json({
+        success: false,
+        message: "Username, email and password are required"
+      });
     }
 
-    const hash = await bcrypt.hash(password, 10);
+    const [existingUser] = await db.query(
+      "SELECT user_id FROM users WHERE email = ?",
+      [email]
+    );
+
+    if (existingUser.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already registered"
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const pinCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     const [result] = await db.query(
-      `INSERT INTO users (username, email, password, timezone, pin_code, pin_created_at, status)
-       VALUES (?, ?, ?, ?, ?, NOW(), 'unverified')`,
-      [username, email, hash, timezone || 'UTC', pinCode]
+      `INSERT INTO users
+      (username, email, password, timezone, pin_code, pin_created_at, status)
+      VALUES (?, ?, ?, ?, ?, NOW(), 'unverified')`,
+      [username, email, hashedPassword, timezone || "UTC", pinCode]
     );
 
-    if (result.affectedRows === 0) {
-      return res.status(500).json({ message: "Error creating member",  });
+    let emailSent = false;
+
+    try {
+      await sendPinCodeEmail(email, pinCode);
+      emailSent = true;
+
+    } catch (emailError) {
+
+      console.error("Email send failed:", emailError);
+
+      await logError(
+        emailError.message,
+        emailError.code || "EMAIL_ERROR",
+        `sendPinCodeEmail | email:${email}`,
+        emailError.stack
+      );
     }
 
-    let emailSent = false;
-    try {
-        await sendPinCodeEmail(email, pinCode);
-        emailSent = true;
-    } catch (err) {
-        console.error("Email failed:", err);
-    }
     const token = createToken({
-        user_id: result.insertId,
-        username,
-        email,
-        timezone: timezone || 'UTC'
-      });
-      
-    res.status(201).json({
-        message: emailSent
-            ? "Registration successful, please check your email."
-            : "Registration successful, but email could not be sent. Please use 'Resend Code'.",
-        user_id: result.insertId,
-        token,
-        Result: "True"
+      user_id: result.insertId,
+      username,
+      email,
+      timezone: timezone || "UTC"
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: emailSent
+        ? "Registration successful. Please check your email."
+        : "Registration successful but email failed. Please resend verification.",
+      user_id: result.insertId,
+      token
     });
 
   } catch (error) {
-    const [errors] = await db.query(
-        `INSERT INTO error(message, type, error_in, error_at)
-         VALUE(?, ?, ?, NOW())`,
-         [error.message, error.type, "createMember"]
+
+    console.error("createMember error:", error);
+
+    await logError(
+      error.message,
+      error.code,
+      "createMember",
+      error.stack
     );
-    if(errors.affectedRows === 0){
-        console.error("Error in createMember:", error);
-        return res.status(500).json(
-          { message: "Can't insert Error to DB" }
-        );
-    }
-    console.error("Error in createMember:", error); // For Render shell
-    res.status(500).json(
-      { message: "Sorry something went wrong with our Server",}
-    );
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
   }
 };
 
 
+const logError = async ({
+  message,
+  code = "UNKNOWN",
+  location = "UNKNOWN",
+  stack = null
+}) => {
+  try {
+
+   
+    console.error({
+      message,
+      code,
+      location,
+      stack,
+
+    });
+
+    await db.query(
+      `INSERT INTO error (message, code, location, stack, error_at)
+       VALUES (?, ?, ?, ?, ?, NOW())`,
+      [
+        message,
+        code,
+        location,
+        stack
+      ]
+    );
+
+  } catch (loggingError) {
 
 
+    console.error("Error while storing error log:", loggingError.message);
 
+  }
+};
 
 
 
