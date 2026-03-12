@@ -120,8 +120,21 @@ const createMember = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error in createMember:", error);
-    res.status(500).json({ message: "This email is already registered...!",});
+    const [errors] = await db.query(
+        `INSERT INTO error(message, type, error_in, error_at)
+         VALUE(?, ?, ?, NOW())`,
+         [error.message, error.type, "createMember"]
+    );
+    if(errors.affectedRows === 0){
+        console.error("Error in createMember:", error);
+        return res.status(500).json(
+          { message: "Can't insert Error to DB" }
+        );
+    }
+    console.error("Error in createMember:", error); // For Render shell
+    res.status(500).json(
+      { message: "Sorry something went wrong with our Server",}
+    );
   }
 };
 
