@@ -11,7 +11,7 @@ export const ContextProvider = ({ children }) => {
     { id: 2, street: 94, city: "SR" },
     { id: 3, street: 13, city: "KP" },
   ];
-  const url = process.env.API_URL; 
+  const url = import.meta.env.API_URL; 
 
   return (
     <AppContent.Provider value={{ des, name, age, address, url }}>

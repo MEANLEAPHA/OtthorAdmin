@@ -23,7 +23,7 @@ const Signup = () => {
     if (name === "password") setInputPassword(value);
     if (name === "confirmPassword") setInputConfirmPassword(value);
   };
-
+ console.log('url is :', url);
   const Register = async () => {
     if(inputConfirmPassword !== inputPassword){
       alert("please confirm your password");
