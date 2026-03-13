@@ -1,31 +1,18 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import Page from './page'
+import Page from './page';
+// import {GoogleOAuthProvider} from '@react-oauth/google';
 const main = document.getElementById('root');
 const root = createRoot(main);
+
+// const CLIENT_ID = "769261651394-b80k5kn379hm5cbrai2auvj9r8jed9lf.apps.googleusercontent.com";
 root.render(
   <>
     <StrictMode>
-        <Page />
+      {/* <GoogleOAuthProvider clientId={CLIENT_ID}> */}
+          <Page />
+      {/* </GoogleOAuthProvider> */}
     </StrictMode>
   </>
 
 )
-
-
-// import { StrictMode } from 'react';
-// import { createRoot } from 'react-dom/client';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import Header from '../src/assets/components/Header';
-// import Main from '../src/assets/components/Main';
-// import Footer from '../src/assets/components/Footer';
-// const main = document.getElementById('root');
-// const root = createRoot(main);
-// root.render(
-//   <>
-//     <Header />
-//     <Main />
-//     <Footer />
-//   </>
-
-// )

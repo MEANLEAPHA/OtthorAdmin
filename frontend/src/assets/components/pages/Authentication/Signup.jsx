@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEyeLowVision } from "@fortawesome/free-solid-svg-icons";
+import { faEyeLowVision, faEye } from "@fortawesome/free-solid-svg-icons";
 import "../../../css/log/Login.css";
 import { useNavigate } from "react-router-dom";
-
+import { AppContent } from "../../../context/context";
+// import { GoogleLogin } from '@react-oauth/google';
 const Signup = () => {
   const navigate = useNavigate();
-
+  const { url } = useContext(AppContent);
   // State hooks for form inputs
   const [inputUsername, setInputUsername] = useState("");
   const [inputEmail, setInputEmail] = useState("");
   const [inputPassword, setInputPassword] = useState("");
   const [inputConfirmPassword, setInputConfirmPassword] = useState("");
+  const [viewPassword, setViewPassword] = useState("password");
+  const [eye, setEye] = useState(faEyeLowVision);
 
   const handleValue = (e) => {
     const { name, value } = e.target;
@@ -22,9 +25,13 @@ const Signup = () => {
   };
 
   const Register = async () => {
+    if(inputConfirmPassword !== inputPassword){
+      alert("please confirm your password");
+      return
+    }
     try {
       const response = await fetch(
-        "https://otthoradmin.onrender.com/api/register",
+        `${url}/api/register`,
         {
           method: "POST",
           headers: {
@@ -53,11 +60,21 @@ const Signup = () => {
     }
   };
 
+ const handleViewPassword = () => {
+    if(viewPassword === "password"){
+       setViewPassword("text");
+       setEye(faEye);
+    }
+    else{
+        setViewPassword("password");
+        setEye(faEyeLowVision)
+    }
+ }
   return (
     <div className="container-form">
       <form
         onSubmit={(e) => {
-          e.preventDefault(); // stop default form submission
+          e.preventDefault(); 
           Register();
         }}
       >
@@ -76,6 +93,7 @@ const Signup = () => {
             onChange={handleValue}
             name="username"
             value={inputUsername}
+            required
           />
         </div>
 
@@ -88,20 +106,22 @@ const Signup = () => {
             onChange={handleValue}
             name="email"
             value={inputEmail}
+            required
           />
         </div>
 
         <label>Password</label>
         <div className="div-input">
           <input
-            type="password"
+            type={viewPassword}
             className="password-input"
             placeholder="Enter Password"
             onChange={handleValue}
             name="password"
             value={inputPassword}
+            required
           />
-          <FontAwesomeIcon icon={faEyeLowVision} className="show-password-icon" />
+          <FontAwesomeIcon icon={eye} className="show-password-icon" onClick={handleViewPassword}/>
         </div>
 
         <label>Confirm Password</label>
@@ -113,12 +133,15 @@ const Signup = () => {
             onChange={handleValue}
             name="confirmPassword"
             value={inputConfirmPassword}
+            required
           />
         </div>
 
         <div className="div-input div-checkBox">
           <div>
-            <input type="checkbox" />
+            <input type="checkbox" 
+              required
+            />
           </div>
           <label>
             I agree to the <u style={{ color: "orange" }}>Terms & Conditions</u>

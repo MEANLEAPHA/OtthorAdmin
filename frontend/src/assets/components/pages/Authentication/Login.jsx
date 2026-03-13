@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEyeLowVision} from "@fortawesome/free-solid-svg-icons";
+import { faEyeLowVision, faEye } from "@fortawesome/free-solid-svg-icons";
 import '../../../css/log/Login.css';
 import {useNavigate} from "react-router-dom";
-
+import { AppContent } from "../../../context/context";
 const Login = () => {
     const navigate = useNavigate();
-
+    const { url } = useContext(AppContent);
       const [inputEmail, setInputEmail] = useState("");
       const [inputPassword, setInputPassword] = useState("");
+      const [viewPassword, setViewPassword] = useState("password");
+      const [eye, setEye] = useState(faEyeLowVision);
    
     const handleValue = (e) => {
     const { name, value } = e.target;
@@ -19,7 +21,7 @@ const Login = () => {
     const SubmitLogin = async () => {
     try {
       const response = await fetch(
-        "https://otthoradmin.onrender.com/api/login",
+        `${url}/api/login`,
         {
           method: "POST",
           headers: {
@@ -58,12 +60,12 @@ const Login = () => {
                 <p className='warm-welcome-p'>Welcome back Otthor member</p>
                 <label>Email</label>
                 <div className='div-input'>
-                    <input type="email" className='email-input' placeholder='Enter Email'/>
+                    <input type="email" className='email-input' placeholder='Enter Email' required onChange={handleValue}/>
                 </div>
                 <label>Password</label>
                 <div className='div-input'>
-                    <input type="password" className='password-input' placeholder='EnterPassword'/>
-                    <FontAwesomeIcon icon={faEyeLowVision} className='show-password-icon'/>
+                    <input type={viewPassword} className='password-input' placeholder='EnterPassword' required onChange={handleValue}/>
+                    <FontAwesomeIcon icon={eye} className='show-password-icon' onClick={() => {setViewPassword(viewPassword === "password" ? "text" : "password"); setEye(viewPassword === "password" ? faEye : faEyeLowVision)}}/>
                 </div>
                 <div className='div-input div-submit'>
                     <button type="submit">Login</button>
