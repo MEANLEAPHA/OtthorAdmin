@@ -25,7 +25,9 @@ import FeedbackAndReport from './assets/components/pages/FeedbackAndReport';
     import Report from './assets/components/pages/page_detail/Report';
 import Login from './assets/components/pages/Authentication/Login';
 import Signup from './assets/components/pages/Authentication/Signup';
+import CommunityTest from './assets/components/pages/test/CommunityTest';
 import { useState } from 'react';
+
 
 
 
@@ -37,7 +39,7 @@ const Page = () =>{
                 <Route path='/' element={<App/>}></Route>
                 <Route path='/Dashboard' element={<App/>}></Route>
 
-              
+                <Route path='/communityTest' element={<CommunityTest />}></Route>
                 <Route path='/Login' element={<Login />}></Route>
                 <Route path='/SignUp' element={<Signup />}></Route>
                 <Route path='/FeedbackAndReport' element={<FeedbackAndReport />}></Route> 

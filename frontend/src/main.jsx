@@ -5,15 +5,18 @@ import Page from './page';
 const main = document.getElementById('root');
 const root = createRoot(main);
 import ContextProvider from "./assets/context/context";
-// const CLIENT_ID = "769261651394-b80k5kn379hm5cbrai2auvj9r8jed9lf.apps.googleusercontent.com";
+
+
 root.render(
   <>
     <StrictMode>
+   
       <ContextProvider>
-      {/* <GoogleOAuthProvider clientId={CLIENT_ID}> */}
-          <Page />
+       
+           <Page />
+        
       </ContextProvider>
-      {/* </GoogleOAuthProvider> */}
+    
     </StrictMode>
   </>
 

@@ -106,7 +106,7 @@ color:var(--font-color)
     z-index: 100;
     background-color:var(--background-color);
     border: 1px solid var(--secondary-color);
-    box-shadow: 0px 6px 15px 5px var(--shadow);
+    left: 0;
 }
 #search-input{
     width: 100%;
@@ -147,43 +147,7 @@ color:var(--font-color)
      border-top: none;
      display: block;
 }
-/* .header-middle:focus-within ~ .overlay-results {
-    display: block;
 
-} */
-/* .header-middle:hover #search-input{
-     border: var(--primary-color) 1px solid;
-    outline: var(--primary-color);
-    border-radius: 0;
-} */
-/* .header-middle:hover .results{
-     border: var(--primary-color) 1px solid;
-     border-top: none;
-} */
-/* .header-middle:hover .search-icon {
-  color: var(--primary-color);
-} */
-/* .header-middle:hover .search-button{
-   border: 1px solid var(--primary-color);
-   border-left: none;
-} */
-/* .header-middle:hover ~ .overlay-results{
-
-  display: block;
-} */
-/* .overlay-results{
-    width: 100%;
-    height: 150vh;
-    position: absolute;
-    top: 0;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    z-index: 99;
-    
-} */
-/* .header-middle:hover{
-    border: none;
-} */
 .header-middle:focus-within {
   border: none;
 }
@@ -233,7 +197,7 @@ color:var(--font-color)
     gap: 5px;
     justify-content: end;
     align-items: center;
-    
+    position: relative;
 }
 .profile-div-img{
     width: 30px;
@@ -246,12 +210,37 @@ color:var(--font-color)
     font-family: var(--primary-font);
     font-size: 14px;
     color: var(--font-color);
- 
     display: flex;
     gap: 5px;
     align-items: center;
-   
 }
+.admin-info-result{
+    width: 100%;
+    height: auto;
+    background-color: var(--back-con);
+    position: absolute;
+    bottom: -205px;
+    z-index: 100;
+    padding: 10px 0px 10px 0px;
+}
+.admin-info-result li{
+    width: 100%;
+    padding: 7px 20px 7px 20px;
+    display: flex;
+    align-items: center;
+    height: auto;
+    gap: 10px;
+    transition: all 0.5s ease;
+}
+.admin-info-result li:hover{
+    color: var(--primary-color);
+    padding-left: 30px;
+    transform: scale(0.9);
+}
+.admin-info-result-hr{
+    margin: 7px 0px 7px 0px ;
+}
+
 .admin-info-div span{
     opacity: 0.5;
 }

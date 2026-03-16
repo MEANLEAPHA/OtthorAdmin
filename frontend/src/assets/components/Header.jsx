@@ -1,12 +1,29 @@
 import React from "react";
 import "../css/Header.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faMagnifyingGlass, faChevronDown, faMoon, faInbox, faSun, faArrowRightFromBracket, faFireFlameCurved, faMagnifyingGlassChart, faTimesCircle,faChartSimple, faGauge,faSliders, faFlag, faCommentDots, faBug, faUser, faBook, faNewspaper, faUsers, faComments, faComment, faBell, faFlagCheckered, faDatabase, faChartPie, faTowerBroadcast, faBan, faFeather, faBullhorn, faServer, faClockRotateLeft, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import { faBars, faMagnifyingGlass, faChevronDown, faMoon, faInbox, faSun, faArrowRightFromBracket, faFireFlameCurved, faMagnifyingGlassChart, faTimesCircle,faChartSimple, faGauge,faSliders, faFlag, faCommentDots, faBug, faUser, faBook, faNewspaper, faUsers, faComments, faComment, faBell, faFlagCheckered, faDatabase, faChartPie, faTowerBroadcast, faBan, faFeather, faBullhorn, faServer, faClockRotateLeft, faTrashCan, faChevronUp} from "@fortawesome/free-solid-svg-icons";
 import {Link, useNavigate} from "react-router-dom";
+import { faBookmark, faCircleQuestion, faCopy, faHeart, faMessage, faPenToSquare, faUserAlt} from "@fortawesome/free-regular-svg-icons";
 import { useState, useRef, useEffect } from "react";
 
 const Header = ({onToggleAside, onToggleTheme, currentTheme}) => {
   const navigate = useNavigate();
+  const [dropDown, setDropDown] = useState("none");
+    const wrapperRef = useRef(null);
+    useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setDropDown("none");
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleDropDown = () => dropDown === "none" ? setDropDown("block") : setDropDown("none"); 
+
   return (
      <header>
       
@@ -29,19 +46,24 @@ const Header = ({onToggleAside, onToggleTheme, currentTheme}) => {
       </div>
       <div className="overlay-results"></div>
       <div className="header-right">
-        <FontAwesomeIcon icon={faArrowRightFromBracket} onClick={() => navigate('/Login')}/>
         <FontAwesomeIcon icon={currentTheme ? faMoon : faSun} onClick={onToggleTheme}/>
         <FontAwesomeIcon icon={faInbox} />
         <div style={{display:"flex", alignItems:"center", paddingBottom:"5px"}}><big style={{opacity:0.5}}>|</big></div> 
-        <div className="profile-div">
-          <img src="https://ih1.redbubble.net/image.2515682869.7692/raf,360x360,075,t,fafafa:ca443f4786.jpg" alt="" className="profile-div-img" />
-          <button className='admin-info-div'>
-            
+        <div className="profile-div" ref={wrapperRef}>
+          <img src="https://ih1.redbubble.net/image.2515682869.7692/raf,360x360,075,t,fafafa:ca443f4786.jpg" className="profile-div-img" />
+          <button className='admin-info-div' onClick={handleDropDown}>
               <span>Hi, </span>
                <b> Meanleap Ha </b>
-               <span>  <FontAwesomeIcon icon={faChevronDown} className="chevronDown-icon"/></span>
-          
+               <span>  <FontAwesomeIcon icon={ dropDown === "none" ? faChevronDown : faChevronUp} className="chevronDown-icon"/></span>
           </button>
+          <ul className='admin-info-result' style={{display: dropDown}} >
+                  <li onClick={() => navigate('/Login')}><FontAwesomeIcon icon={faUserAlt} /> View Account</li>
+                  <li onClick={onToggleTheme}><FontAwesomeIcon icon={currentTheme ? faMoon : faSun} /> <span>{currentTheme ? "Dark Mode" : "Light Mode"}</span></li>
+                  <li onClick={() => navigate('/Login')}><FontAwesomeIcon icon={faCircleQuestion} /> Help</li>
+                  <hr className='admin-info-result-hr'/>
+                  <li onClick={() => navigate('/Login')}><FontAwesomeIcon icon={faArrowRightFromBracket} /> Log out</li>
+                  
+              </ul>
         </div>
       </div>
     </header>
@@ -117,11 +139,13 @@ const Search = () => {
   const clearSearch = () => {
     setSearchTerm("");
     setFilteredResults([]);
+
+    
     // setShowResults(false);
   };
   return (
      <>
-        <div ref={wrapperRef} className="search-box">
+        <div className="search-box" ref={wrapperRef}>
           <input
             type="text"
             id="search-input"

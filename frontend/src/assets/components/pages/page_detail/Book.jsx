@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight} from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 export default function Book(){
      const [showMaxAside, setMaxAside] = useState(() => {
         return localStorage.getItem("maxAside") === "true";
@@ -79,22 +80,15 @@ const Section = () =>{
 
 const FetchAPI = () => {
     const [book ,setBook] = useState([]);
-    useEffect(()=>{
-        fetchData();
-    },[]);
+    
 
-    const fetchData = async () => {
-        try{
-            var url = "https://gutendex.com/books/?sort=popular";
-            fetch(url)
-            .then((res) => res.json())
-            .then((data) => setBook(data.results))
-            .catch((error) => console.error(error))
-        }
-        catch(error){
-            console.error(error)
-        }
-    }
+  
+        var url = "https://gutendex.com/books/?sort=popular";
+       useEffect(()=>{
+         axios.get(url)
+         .then((res) => setBook(res.data.results))
+       }, [])
+  
     return(
         <div>
             <h1>Popular Books</h1>
@@ -110,3 +104,20 @@ const FetchAPI = () => {
 
     )
 }
+
+// useEffect(()=>{
+//         fetchData();
+//     },[]);
+
+//     const fetchData = async () => {
+//         try{
+//             var url = "https://gutendex.com/books/?sort=popular";
+//             fetch(url)
+//             .then((res) => res.json())
+//             .then((data) => setBook(data.results))
+//             .catch((error) => console.error(error))
+//         }
+//         catch(error){
+//             console.error(error)
+//         }
+//     }

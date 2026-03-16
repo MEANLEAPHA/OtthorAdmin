@@ -33,7 +33,7 @@ const app = express();
 
 app.use(cors({
   origin: "https://otthoradmin-frontend.onrender.com"
-}));
+})); 
 
 app.use(express.json());
 
